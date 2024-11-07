@@ -1,7 +1,7 @@
 package it.unibo.nestedenum;
 
 import java.util.Comparator;
-import java.util.Locale;
+import java.util.Locale;   
 import java.util.Objects;
 
 /**
@@ -9,13 +9,64 @@ import java.util.Objects;
  */
 public final class MonthSorterNested implements MonthSorter {
 
+    private static final Comparator<String> BYDAYS = new SortByDays();
+    private static final Comparator<String> BYMONTH = new SortByMonthOrder();
+
     @Override
     public Comparator<String> sortByDays() {
-        return null;
+        return BYDAYS;
     }
 
     @Override
     public Comparator<String> sortByOrder() {
-        return null;
+        return BYMONTH;
     }
+
+    private enum Month{
+
+        JANUARY(31), FEBRUARY(28),MARCH(31), APRIL(30),
+        MAY(31), JUNE(30), JULY(31), AUGUST(31),
+        SEPTEMEBER(30), OCTOBER(31), NOVEMBER(30), DECEMBER(31);
+
+        private final int days;
+
+        Month(final int days){
+            this.days = days;
+        }
+
+        static Month fromString(String value){
+            final String normalizedValue = value.toLowerCase(Locale.UK);
+            int matchCounter = 0;
+            Month monthFound = null;
+            for (final Month month : values()) {
+                if (month.name().toLowerCase(Locale.UK).startsWith(normalizedValue)) {
+                    monthFound = month;
+                    matchCounter++;
+                }
+            }
+            if (matchCounter == 0) {
+                throw new IllegalArgumentException("Month not found with input " + value);
+            }
+            if (matchCounter > 1) {
+                throw new IllegalArgumentException("Too many months fround with specific input " + value);
+            }
+            return monthFound;
+        } 
+    }
+
+    private static final class SortByMonthOrder implements Comparator<String>{
+        @Override
+        public int compare(String o1, String o2) {
+            return Month.fromString(o1).compareTo(Month.fromString(o2));
+        }
+    }
+    
+    private static final class SortByDays implements Comparator<String>{
+        @Override
+        public int compare(String o1, String o2) {
+            var numberOfDays1 = Month.fromString(o1);
+            var numberOfDays2 = Month.fromString(o2);
+            return Integer.compare(numberOfDays1.days, numberOfDays2.days);
+        }
+    }    
 }
