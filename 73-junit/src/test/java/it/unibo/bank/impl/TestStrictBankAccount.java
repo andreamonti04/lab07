@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static it.unibo.bank.impl.SimpleBankAccount.MANAGEMENT_FEE;
+import static it.unibo.bank.impl.StrictBankAccount.TRANSACTION_FEE;
 
 /**
  * Test class for the {@link StrictBankAccount} class.
@@ -48,7 +49,7 @@ class TestStrictBankAccount {
         bankAccount.deposit(mRossi.getUserID(), FIRST_DEPOSIT);
         assertEquals(FIRST_DEPOSIT, bankAccount.getBalance());
         bankAccount.chargeManagementFees(mRossi.getUserID());
-        assertTrue(bankAccount.getBalance() < FIRST_DEPOSIT);
+        assertEquals(FIRST_DEPOSIT - TRANSACTION_FEE - MANAGEMENT_FEE, bankAccount.getBalance());
     }
 
     /**
